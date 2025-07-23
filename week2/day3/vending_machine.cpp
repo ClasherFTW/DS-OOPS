@@ -6,9 +6,9 @@ int main() {
     const int SIZE = 4;
     string items[SIZE] = {"Chips", "Soda", "Candy", "Water"};
     double prices[SIZE] = {2.50, 1.75, 1.25, 1.00};
-    int choice;
-    double moneyInserted, change;
-    int quantity;
+
+    int choice, quantity;
+    double price, total, money, change;
 
     do {
         
@@ -17,74 +17,68 @@ int main() {
             cout << i + 1 << ". " << items[i] << " - $" << fixed << setprecision(2) << prices[i] << endl;
         }
         cout << "5. Exit\n";
-
-        cout << "Select item (1-5): ";
+        cout << "Please choose an item (1-5): ";
         cin >> choice;
 
-        
-        if (cin.fail()) {
-            cin.clear(); 
-            cin.ignore(1000, '\n'); 
-            cout << "Invalid input. Please enter a number.\n";
-            continue;
+        if (choice == 5) {
+            cout << "Thank you for using the vending machine!\n";
+            break;
         }
 
         if (choice >= 1 && choice <= SIZE) {
+            
             int index = choice - 1;
-            cout << "Selected: " << items[index] << " ($" << fixed << setprecision(2) << prices[index] << ")\n";
+            price = prices[index];
+            string itemName = items[index];
 
+            cout << "You selected: " << itemName << " ($" << fixed << setprecision(2) << price << ")\n";
             cout << "Enter quantity: ";
             cin >> quantity;
 
-            if (cin.fail() || quantity <= 0) {
-                cin.clear();
-                cin.ignore(1000, '\n');
-                cout << "Invalid quantity. Returning to menu.\n";
-                continue;
+            
+            total = price * quantity;
+            cout << "Total cost: $" << fixed << setprecision(2) << total << endl;
+
+            
+            money = 0;
+            do {
+                double insert;
+                cout << "Insert money: $";
+                cin >> insert;
+
+                if (insert > 0) {
+                    money += insert;
+
+                    if (money < total) {
+                        cout << "Not enough. Insert $" << fixed << setprecision(2)
+                             << (total - money) << " more.\n";
+                    }
+
+                } else {
+                    cout << "Please insert a valid amount.\n";
+                }
+
+            } while (money < total);
+
+            
+            if (money >= total) {
+                change = money - total;
+                cout << "Dispensing " << quantity << " x " << itemName << endl;
+
+                if (change > 0) {
+                    cout << "Returning change: $" << fixed << setprecision(2) << change << endl;
+                }
+
+                cout << "Enjoy your " << itemName << "!\n";
             }
 
-            double totalCost = prices[index] * quantity;
-            moneyInserted = 0;
-
-            cout << "Total cost: $" << fixed << setprecision(2) << totalCost << endl;
-
-            
-            do {
-                double amount;
-                cout << "Insert money ($): ";
-                cin >> amount;
-
-                if (cin.fail() || amount <= 0) {
-                    cin.clear();
-                    cin.ignore(1000, '\n');
-                    cout << "Invalid amount. Try again.\n";
-                    continue;
-                }
-
-                moneyInserted += amount;
-
-                if (moneyInserted < totalCost) {
-                    cout << "Not enough. Please insert at least $"
-                         << fixed << setprecision(2) << (totalCost - moneyInserted) << " more.\n";
-                }
-            } while (moneyInserted < totalCost);
-
-            
-            change = moneyInserted - totalCost;
-            if (change > 0)
-                cout << "Dispensing change: $" << fixed << setprecision(2) << change << endl;
-
-            cout << "Dispensing " << quantity << " x " << items[index] << "...\n";
-
-        } else if (choice == 5) {
-            cout << "Exiting... Thank you!\n";
         } else {
-            cout << "Invalid selection. Try again.\n";
+            cout << "Invalid selection. Please try again.\n";
         }
 
-        cout << "-----------------------------\n";
+        cout << "------------------------------\n";
 
-    } while (choice != 5);
+    } while (true);
 
     return 0;
 }
